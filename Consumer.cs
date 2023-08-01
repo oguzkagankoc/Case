@@ -19,6 +19,7 @@ namespace Case
             {
                 foreach (var productObject in productObjects)
                 {
+                    var productId = (int)productObject["id"];
                     // Create a new Product object and populate its properties from the JSON data
                     var product = new Product
                     {
@@ -33,26 +34,35 @@ namespace Case
                         Category = (string)productObject["category"],
                         Thumbnail = (string)productObject["thumbnail"]
                     };
-
-                    // Add the product to the database context
-                    dbContext.Products.Add(product);
-
-                    var images = productObject["images"];
-                    if (images != null && images.HasValues)
+                    if (dbContext.Products.Any(p => p.Id == productId))
                     {
-                        // Iterate through the images and create ProductImage objects for each image
-                        foreach (var imageUrl in images)
-                        {
-                            var productImage = new ProductImage
-                            {
-                                ProductId = product.Id,
-                                ImageUrl = imageUrl.ToString()
-                            };
+                        // If a product with the same ID exists, skip adding and display a warning message
+                        Console.WriteLine($"Product with ID {productId} already exists in the database. Skipping...");
+                        continue;
+                    }
+                    else
+                    {
+                        dbContext.Products.Add(product);
 
-                            // Add the product image to the database context
-                            dbContext.ProductImages.Add(productImage);
+                        var images = productObject["images"];
+                        if (images != null && images.HasValues)
+                        {
+                            // Iterate through the images and create ProductImage objects for each image
+                            foreach (var imageUrl in images)
+                            {
+                                var productImage = new ProductImage
+                                {
+                                    ProductId = product.Id,
+                                    ImageUrl = imageUrl.ToString()
+                                };
+
+                                // Add the product image to the database context
+                                dbContext.ProductImages.Add(productImage);
+                            }
                         }
                     }
+                    // Add the product to the database context
+
 
                     // Save the changes to the database
                     dbContext.SaveChanges();

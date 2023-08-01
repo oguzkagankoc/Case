@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace Case
 {
@@ -9,8 +11,15 @@ namespace Case
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            // Set the PostgreSQL database connection string here
-            string connectionString = "Host=localhost;Port=5432;Database=case;Username=postgres;Password=122333";
+            // Load configuration from appsettings.json
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+            var configuration = builder.Build();
+
+            // Set the PostgreSQL database connection string from configuration
+            string connectionString = configuration.GetConnectionString("DefaultConnection");
             optionsBuilder.UseNpgsql(connectionString);
         }
     }
