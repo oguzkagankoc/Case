@@ -1,4 +1,4 @@
-# Project Name
+# Case
 
 A .NET Core application demonstrating the use of RabbitMQ, multi-threading, and ORM.
 
