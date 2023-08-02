@@ -61,8 +61,6 @@ namespace Case
                             }
                         }
                     }
-                    // Add the product to the database context
-
 
                     // Save the changes to the database
                     dbContext.SaveChanges();
